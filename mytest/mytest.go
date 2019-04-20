@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "terreactive.ch/LogFlow/flow_types"
+import "terreactive.ch/LogFlow/nodes"
 
 func Print_log_item(i flow_types.Log_item) {
 	if i.Raw != nil {
@@ -30,4 +31,7 @@ func main() {
 	x.Raw = &logline
 
 	Print_log_item(x)
+
+	fmt.Println("--")
+	source_file.ReadFile("t/data/20190412.base")
 }
