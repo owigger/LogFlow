@@ -13,7 +13,7 @@ type count struct {
 }
 
 type splitter struct {
-	goflow.Component
+	flow.Component
 
 	In         <-chan string
 	Out1, Out2 chan<- string
@@ -25,7 +25,7 @@ func (t *splitter) OnIn(s string) {
 }
 
 type wordCounter struct {
-	goflow.Component
+	flow.Component
 	Sentence <-chan string
 	Count    chan<- *count
 }
@@ -35,7 +35,7 @@ func (wc *wordCounter) OnSentence(sentence string) {
 }
 
 type letterCounter struct {
-	goflow.Component
+	flow.Component
 	Sentence <-chan string
 	Count    chan<- *count
 	re       *regexp.Regexp
@@ -50,7 +50,7 @@ func (lc *letterCounter) Init() {
 }
 
 type printer struct {
-	goflow.Component
+	flow.Component
 	Line <-chan *count //inport
 }
 
@@ -59,7 +59,7 @@ func (p *printer) OnLine(c *count) {
 }
 
 type counterNet struct {
-	goflow.Graph
+	flow.Graph
 }
 
 // Assembling the network
@@ -83,7 +83,7 @@ func main() {
 	net := NewCounterNet()
 	in := make(chan string)
 	net.SetInPort("In", in)
-	goflow.RunNet(net)
+	flow.RunNet(net)
 	in <- "I never put off till tomorrow what I can do the day after."
 	in <- "Fashion is a form of ugliness so intolerable that we hae to alter it every six months."
 	in <- "Life is too important to be taken seriously."
