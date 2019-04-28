@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/goflow"
+	"github.com/trustmaster/goflow"
 	"regexp"
 	"strings"
 )
