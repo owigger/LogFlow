@@ -1,37 +1,39 @@
 package main
 
-import "fmt"
-import "terreactive.ch/LogFlow/flow_types"
-import "terreactive.ch/LogFlow/nodes"
+import (
+	"fmt"
+	"github.com/trustmaster/goflow"
+	"terreactive.ch/LogFlow/components"
+)
 
-func Print_log_item(i flow_types.Log_item) {
-	if i.Raw != nil {
-		fmt.Println("Raw: ", *i.Raw)
-	} else {
-		fmt.Println("Raw logline missing")
-	}
+// the test nework
+type testNet struct {
+	flow.Graph
+}
 
-	if i.Syslog != nil {
-		fmt.Println("Syslog: ", *i.Syslog)
-	} else {
-		fmt.Println("Syslog block is missing")
-	}
-
-	if i.Kvp != nil {
-		fmt.Println("Key-Value pairs: ", *i.Kvp)
-	} else {
-		fmt.Println("Key-Value-Pair block is missing")
-	}
+// construct the entire network
+func NewTestNet() *testNet {
+	n := &testNet{}
+	n.InitGraphState()
+	n.Add(&components.Readfile{}, "Readfile")
+	n.Add(&components.Print{}, "Print")
+	n.Connect("Readfile", "Line", "Print", "In")
+	n.MapInPort("filename", "Readfile", "filename")
+	return n
 }
 
 func main() {
-	var x flow_types.Log_item
-	var logline flow_types.Log_raw
-	logline = "Apr 12 16:33:03 proxy owi104: Apr 12 16:33:03 @MA1Wbpw--1uqtk-- user.info upstart: Connection from private client"
-	x.Raw = &logline
+	fmt.Println("creating netowrk")
+	net := NewTestNet()
+	in := make(chan string)
+	fmt.Println("attaching input")
+	net.SetInPort("In", in)
+	flow.RunNet(net)
 
-	Print_log_item(x)
+	fmt.Println("executing")
+	in <- "t/data/20190412.base"
 
-	fmt.Println("--")
-	source_file.ReadFile("t/data/20190412.base")
+	close(in)
+	// <-net.Wait
+	fmt.Println("bye")
 }
