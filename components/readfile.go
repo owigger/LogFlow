@@ -1,22 +1,27 @@
 package components
 
 import (
-	"fmt"
+	"bufio"
 	"github.com/trustmaster/goflow"
-	"io/ioutil"
+	"os"
 )
 
 type Readfile struct {
 	flow.Component
 	filename <-chan string // filename inport
-	Lines    chan<- string // send line-by-line outport
+	Line     chan<- string // send line-by-line outport
+	Error    chan<- error  // send error messages
 }
 
 func (c *Readfile) OnIn(filename string) {
-	b, err := ioutil.ReadFile(filename)
+	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Print(err)
+		c.Error <- err
 	}
+	defer file.Close()
 
-	c.Lines <- string(b)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		c.Line <- string(scanner.Text())
+	}
 }
