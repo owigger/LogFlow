@@ -18,7 +18,7 @@ func NewTestNet() *testNet {
 	n.Add(&components.Readfile{}, "Readfile")
 	n.Add(&components.Print{}, "Print")
 	n.Connect("Readfile", "Line", "Print", "In")
-	n.MapInPort("filename", "Readfile", "filename")
+	n.MapInPort("In", "Readfile", "Filename")
 	return n
 }
 

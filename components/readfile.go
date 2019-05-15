@@ -8,13 +8,13 @@ import (
 
 type Readfile struct {
 	flow.Component
-	filename <-chan string // filename inport
+	Filename <-chan string // filename inport
 	Line     chan<- string // send line-by-line outport
 	Error    chan<- error  // send error messages
 }
 
-func (c *Readfile) OnIn(filename string) {
-	file, err := os.Open(filename)
+func (c *Readfile) OnFilename(Filename string) {
+	file, err := os.Open(Filename)
 	if err != nil {
 		c.Error <- err
 	}
