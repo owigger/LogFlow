@@ -10,13 +10,14 @@ type Readfile struct {
 	flow.Component
 	Filename <-chan string // filename inport
 	Line     chan<- string // send line-by-line outport
-	Error    chan<- error  // send error messages
+	Error    chan<- string  // send error messages
 }
 
-func (c *Readfile) OnFilename(Filename string) {
-	file, err := os.Open(Filename)
+func (c *Readfile) OnFilename(filename string) {
+	file, err := os.Open(filename)
 	if err != nil {
-		c.Error <- err
+		errorstring := err.Error()
+		c.Error <- errorstring
 	}
 	defer file.Close()
 

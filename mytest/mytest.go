@@ -18,12 +18,13 @@ func NewTestNet() *testNet {
 	n.Add(&components.Readfile{}, "Readfile")
 	n.Add(&components.Print{}, "Print")
 	n.Connect("Readfile", "Line", "Print", "In")
+	n.Connect("Readfile", "Error", "Print", "In")
 	n.MapInPort("In", "Readfile", "Filename")
 	return n
 }
 
 func main() {
-	fmt.Println("creating netowrk")
+	fmt.Println("creating network")
 	net := NewTestNet()
 	in := make(chan string)
 	fmt.Println("attaching input")
@@ -32,8 +33,10 @@ func main() {
 
 	fmt.Println("executing")
 	in <- "t/data/20190412.base"
+	in <- "no_such_file"
+	in <- "t/data/textfile"
 
 	close(in)
-	// <-net.Wait
+	<-net.Wait()
 	fmt.Println("bye")
 }
