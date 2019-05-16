@@ -14,3 +14,12 @@ go get github.com/nu7hatch/gouuid
 cd github.com/trustmaster/goflow
 git checkout 0.1
 ```
+
+##poc0
+This is the first simple network that actually runs for me.
+It has only two components: ReadFile which reads a text file
+line by line (accepting filenames at its input), and Print,
+which prints lines of text to stdout. Run it:
+```
+cd go/src/terreactive.ch/LogFlow
+go run mytest/poc0.go
