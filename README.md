@@ -15,7 +15,7 @@ cd github.com/trustmaster/goflow
 git checkout 0.1
 ```
 
-##poc0
+## poc0
 This is the first simple network that actually runs for me.
 It has only two components: ReadFile which reads a text file
 line by line (accepting filenames at its input), and Print,
