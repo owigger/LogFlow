@@ -1,6 +1,6 @@
 # LogFlow
 
-A logsurfer replacement inspired by data-flow based pardigms.
+A logsurfer replacement inspired by data-flow based paradigms.
 
 using goflow version 0.1 because the current
 development branch is unstable and undocumented.
@@ -23,3 +23,7 @@ which prints lines of text to stdout. Run it:
 ```
 cd go/src/terreactive.ch/LogFlow
 go run mytest/poc0.go
+
+## poc1
+Builds on poc0 and adds more components, allowing the construction
+of networks that really processes real logs.

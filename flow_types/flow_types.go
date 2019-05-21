@@ -8,13 +8,10 @@ import "time"
 // Some basic fields (like timestamp) are always available.
 type LogStream struct {
 	Timestamp time.Time  // our idea of when this message was generated
-	Raw       *LogRaw    // raw logline string
+	Raw       *string    // raw logline string
 	Syslog    *LogSyslog // RFC3164 syslog-parsed logline structure
 	Kvp       *LogKvp    // generic key-value pair structure
 }
-
-// The unparsed, raw log message as received
-type LogRaw string
 
 // RFC 3164
 type LogSyslog struct {

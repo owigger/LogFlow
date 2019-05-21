@@ -5,17 +5,16 @@ package components
 
 import (
 	"github.com/trustmaster/goflow"
-	"terreactive.ch/LogFlow/flow_types/flow_types"
+	"terreactive.ch/LogFlow/flow_types"
 )
 
 type LineToStream struct {
 	flow.Component
 	In  <-chan string
-	Out chan<- LogStream
+	Out chan<- flow_types.LogStream
 }
 
-func (x *LineToStram) OnIn(logline string) {
-	var rawline string
-	rawline <- logline
-	x.Raw = *rawline
+func (x *LineToStream) OnIn(logline string) {
+	var newlog flow_types.LogStream
+	newlog.Raw = &logline
 }
