@@ -16,9 +16,10 @@ func NewTestNet() *testNet {
 	n := &testNet{}
 	n.InitGraphState()
 	n.Add(&components.Readfile{}, "Readfile")
-	n.Add(&components.Print{}, "Print")
-	n.Connect("Readfile", "Line", "Print", "In")
-	n.Connect("Readfile", "Error", "Print", "In")
+	n.Add(&components.LineToStream{}, "LineToStream")
+	n.Add(&components.StreamDump{}, "StreamDump")
+	n.Connect("Readfile", "Line", "LineToStream", "In")
+	n.Connect("LineToStream", "Out", "StreamDump", "In")
 	n.MapInPort("In", "Readfile", "Filename")
 	return n
 }
