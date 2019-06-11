@@ -17,4 +17,5 @@ type LineToStream struct {
 func (x *LineToStream) OnIn(logline string) {
 	var newlog flow_types.LogStream
 	newlog.Raw = &logline
+	x.Out <- newlog
 }
