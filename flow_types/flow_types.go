@@ -10,6 +10,7 @@ type LogStream struct {
 	Timestamp time.Time  // our idea of when this message was generated
 	Raw       *string    // raw logline string
 	Syslog    *LogSyslog // RFC3164 syslog-parsed logline structure
+	Taclog    *LogTaclog // tacLOG parsed logline header+message
 	Kvp       *LogKvp    // generic key-value pair structure
 }
 
@@ -22,7 +23,7 @@ type LogSyslog struct {
 }
 
 // canonical tacLOG message
-type Log_taclog struct {
+type LogTaclog struct {
 	Stime        time.Time // syslog's idea of when the messages was received
 	Rtime        time.Time // the senders idea of when the messages was sent
 	Platform     string    // the tacLOG platform

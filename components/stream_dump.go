@@ -17,4 +17,9 @@ func (x *StreamDump) OnIn(logmsg flow_types.LogStream) {
 	if *logmsg.Raw != "" {
 		fmt.Println("Raw: ", *logmsg.Raw)
 	}
+	s := logmsg.Taclog
+	if s != nil {
+		fmt.Println("Taclog: ")
+		fmt.Println("  msgid: ", s.Msgid)
+	}
 }
