@@ -24,8 +24,8 @@ type LogSyslog struct {
 
 // canonical tacLOG message
 type LogTaclog struct {
-	Stime        time.Time // syslog's idea of when the messages was received
-	Rtime        time.Time // the senders idea of when the messages was sent
+	Sent         string    // syslog's idea of when the messages was received
+	Received     string    // the senders idea of when the messages was sent
 	Platform     string    // the tacLOG platform
 	Host         string    // host name of log source
 	Msgid        string    // 16 character tacLOG unique messasge ID
@@ -35,6 +35,8 @@ type LogTaclog struct {
 	AlevId       string    // Event_ID or Alert_ID
 	AlevCategory string    // log, event, or alert
 	AlevText     string    // Patrick, what is this? should use Message?
+	Stime        time.Time // Sent time
+	Rtime        time.Time // Received time
 }
 
 // Key-Value pairs, parsed from message

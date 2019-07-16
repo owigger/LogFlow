@@ -32,8 +32,7 @@ type ParseTaclog struct {
 
 func (x *ParseTaclog) OnIn(logmsg flow_types.LogStream) {
 	var raw = *logmsg.Raw
-	var length, colon int
-	var msgid string
+	var length, colon, pltf int
 	if *logmsg.Raw != "" {
 		length = len(raw)
 		if length < 35 {
@@ -43,13 +42,27 @@ func (x *ParseTaclog) OnIn(logmsg flow_types.LogStream) {
 		if colon < 0 {
 			return // no colon after position 16
 		}
-		if raw[colon+16+18] != '@' {
+		colon += 16
+		if raw[colon+18] != '@' {
 			return // no msgid where expected
 		}
-		msgid = raw[colon+16+19 : colon+16+35]
 		var taclogStruct flow_types.LogTaclog
 		logmsg.Taclog = &taclogStruct
-		taclogStruct.Msgid = msgid
+
+		taclogStruct.Sent = raw[0:15]
+		pltf = strings.Index(raw[16:], " ")
+		taclogStruct.Platform = raw[16 : pltf+16]
+		taclogStruct.Host = raw[pltf+17 : colon]
+		taclogStruct.Received = raw[colon+2 : colon+17]
+		taclogStruct.Msgid = raw[colon+19 : colon+35]
+		/*
+			taclogStruct.Program      string    // the senders program name
+			taclogStruct.Pid          int       // the senders process ID
+			taclogStruct.Message      string    // the payload
+			taclogStruct.AlevId       string    // Event_ID or Alert_ID
+			taclogStruct.AlevCategory string    // log, event, or alert
+			taclogStruct.AlevText     string    // Patrick, what is this? should use Message?
+		*/
 	}
 	x.Out <- logmsg
 }

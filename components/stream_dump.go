@@ -20,6 +20,10 @@ func (x *StreamDump) OnIn(logmsg flow_types.LogStream) {
 	s := logmsg.Taclog
 	if s != nil {
 		fmt.Println("Taclog: ")
-		fmt.Println("  msgid: ", s.Msgid)
+		fmt.Println("  msgid   : ", s.Msgid)
+		fmt.Println("  Sent    : ", s.Sent)
+		fmt.Println("  Received: ", s.Received)
+		fmt.Println("  Platform: ", s.Platform)
+		fmt.Println("  Host    : ", s.Host)
 	}
 }
