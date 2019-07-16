@@ -43,10 +43,10 @@ func (x *ParseTaclog) OnIn(logmsg flow_types.LogStream) {
 		if colon < 0 {
 			return // no colon after position 16
 		}
-		if raw[colon+18] != '@' {
+		if raw[colon+16+18] != '@' {
 			return // no msgid where expected
 		}
-		msgid = raw[colon+19 : colon+35]
+		msgid = raw[colon+16+19 : colon+16+35]
 		var taclogStruct flow_types.LogTaclog
 		logmsg.Taclog = &taclogStruct
 		taclogStruct.Msgid = msgid
