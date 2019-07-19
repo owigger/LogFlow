@@ -20,6 +20,7 @@ package components
 
 import (
 	"github.com/trustmaster/goflow"
+	"strconv"
 	"strings"
 	"terreactive.ch/LogFlow/flow_types"
 )
@@ -32,18 +33,20 @@ type ParseTaclog struct {
 
 func (x *ParseTaclog) OnIn(logmsg flow_types.LogStream) {
 	var raw = *logmsg.Raw
-	var length, colon, pltf int
+	var length, colon1, colon2, pltf, space2, bracket1 int
+	var program string
 	if *logmsg.Raw != "" {
 		length = len(raw)
 		if length < 35 {
 			return // too short to contain a tacLOG line
 		}
-		colon = strings.Index(raw[16:], ":")
-		if colon < 0 {
+		colon1 = strings.Index(raw[16:], ":")
+		if colon1 < 0 {
 			return // no colon after position 16
 		}
-		colon += 16
-		if raw[colon+18] != '@' {
+		colon1 += 16
+
+		if raw[colon1+18] != '@' {
 			return // no msgid where expected
 		}
 		var taclogStruct flow_types.LogTaclog
@@ -52,14 +55,42 @@ func (x *ParseTaclog) OnIn(logmsg flow_types.LogStream) {
 		taclogStruct.Sent = raw[0:15]
 		pltf = strings.Index(raw[16:], " ")
 		taclogStruct.Platform = raw[16 : pltf+16]
-		taclogStruct.Host = raw[pltf+17 : colon]
-		taclogStruct.Received = raw[colon+2 : colon+17]
-		taclogStruct.Msgid = raw[colon+19 : colon+35]
+		taclogStruct.Host = raw[pltf+17 : colon1]
+		taclogStruct.Received = raw[colon1+2 : colon1+17]
+		taclogStruct.Msgid = raw[colon1+19 : colon1+35]
+
+		colon2 = strings.Index(raw[colon1+36:], ":")
+		if colon2 < 0 {
+			// no colon after MsgID, everything is log message
+			taclogStruct.Message = raw[colon1+36:]
+			return
+		}
+		colon2 += colon1 + 36
+
+		space2 = strings.Index(raw[colon1+36:colon2], " ")
+		if space2 < 0 {
+			// illegal. assume everything is log message
+			taclogStruct.Message = raw[colon1+36:]
+			return
+		}
+		space2 += colon1 + 36
+
+		taclogStruct.AlevId = raw[colon1+36 : space2]
+
+		program = raw[space2+1 : colon2]
+		bracket1 = strings.Index(program, "[")
+		if bracket1 < 0 {
+			taclogStruct.Program = program
+		} else {
+			// we have a PID within brackets
+			taclogStruct.Program = program[0 : bracket1]
+			taclogStruct.Pid, _ = strconv.Atoi(program[bracket1:len(program)])
+		}
+
+		taclogStruct.Message = raw[colon2+2:]
+
 		/*
-			taclogStruct.Program      string    // the senders program name
-			taclogStruct.Pid          int       // the senders process ID
-			taclogStruct.Message      string    // the payload
-			taclogStruct.AlevId       string    // Event_ID or Alert_ID
+			Not yet parsed:
 			taclogStruct.AlevCategory string    // log, event, or alert
 			taclogStruct.AlevText     string    // Patrick, what is this? should use Message?
 		*/

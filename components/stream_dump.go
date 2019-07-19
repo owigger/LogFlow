@@ -25,5 +25,10 @@ func (x *StreamDump) OnIn(logmsg flow_types.LogStream) {
 		fmt.Println("  Received: ", s.Received)
 		fmt.Println("  Platform: ", s.Platform)
 		fmt.Println("  Host    : ", s.Host)
+		fmt.Println("  AlevId  : ", s.AlevId)
+		fmt.Println("  Program : ", s.Program)
+		fmt.Println("  Pid     : ", s.Pid)
+		fmt.Println("  Message : ", s.Message)
 	}
 }
+
