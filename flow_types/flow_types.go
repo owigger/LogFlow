@@ -2,22 +2,20 @@ package flow_types
 
 import "time"
 
-// The Log_item is the basic data type that flows through LogFlow pipes.
+// The LogStream is the basic data type that flows through LogFlow pipes.
 // It's merely a container that contains links to various other types
 // available for log messages in various phases of processing.
 // Some basic fields (like timestamp) are always available.
-type Log_item struct {
-	Timestamp time.Time   // some idea of when this message was generated
-	Raw       *Log_raw    // link to raw logline
-	Syslog    *Log_syslog // link to RFC3164 syslog-parsed logline
-	Kvp       *Log_kvp    // link to the generic key-value pair map
+type LogStream struct {
+	Timestamp time.Time  // our idea of when this message was generated
+	Raw       *string    // raw logline string
+	Syslog    *LogSyslog // RFC3164 syslog-parsed logline structure
+	Taclog    *LogTaclog // tacLOG parsed logline header+message
+	Kvp       *LogKvp    // generic key-value pair structure
 }
 
-// The unparsed, raw log message as received
-type Log_raw string
-
 // RFC 3164
-type Log_syslog struct {
+type LogSyslog struct {
 	Severity int8
 	Facility int8
 	Header   string
@@ -25,19 +23,21 @@ type Log_syslog struct {
 }
 
 // canonical tacLOG message
-type Log_taclog struct {
-	S_time        time.Time
-	R_time        time.Time
-	Platform      string
-	Host          string
-	Msgid         string
-	Program       string
-	Pid           int
-	Message       string
-	Alev_id       string
-	Alev_category string
-	Alev_text     string
+type LogTaclog struct {
+	Sent         string    // syslog's idea of when the messages was received
+	Received     string    // the senders idea of when the messages was sent
+	Platform     string    // the tacLOG platform
+	Host         string    // host name of log source
+	Msgid        string    // 16 character tacLOG unique messasge ID
+	Program      string    // the senders program name
+	Pid          int       // the senders process ID
+	Message      string    // the payload
+	AlevId       string    // Event_ID or Alert_ID
+	AlevCategory string    // log, event, or alert
+	AlevText     string    // Patrick, what is this? should use Message?
+	Stime        time.Time // Sent time
+	Rtime        time.Time // Received time
 }
 
 // Key-Value pairs, parsed from message
-type Log_kvp map[string]string
+type LogKvp map[string]string
